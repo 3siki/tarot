@@ -1,6 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { TarotCard } from '@/data/types';
 
@@ -22,6 +24,8 @@ const romanNumerals = ['0','I','II','III','IV','V','VI','VII','VIII','IX','X','X
 export default function TarotCardTile({ card, index = 0 }: { card: TarotCard; index?: number }) {
   const gradient = getGradient(card);
   const numeral = card.arcana === 'major' ? romanNumerals[card.number] : String(card.number);
+  const imagePath = `/cards/${card.id}.jpg`;
+  const [imgError, setImgError] = useState(false);
 
   return (
     <motion.div
@@ -32,11 +36,24 @@ export default function TarotCardTile({ card, index = 0 }: { card: TarotCard; in
       <Link href={`/cards/${card.id}`} className="block group">
         <div className="card-shimmer rounded-[16px] bg-card-bg border border-border hover:border-border-hover transition-all duration-300 overflow-hidden">
           {/* Card Visual */}
-          <div className={`relative aspect-[3/4] bg-gradient-to-br ${gradient} flex flex-col items-center justify-center p-4`}>
-            <div className="absolute inset-0 bg-gradient-to-t from-card-bg/80 via-transparent to-transparent" />
-            <span className="relative text-4xl sm:text-5xl font-serif text-accent-gold/60 mb-2">{numeral}</span>
-            <div className="relative w-8 h-px bg-accent-gold/30 mb-3" />
-            <span className="relative text-xs text-text-muted tracking-widest uppercase">{card.nameEn}</span>
+          <div className={`relative aspect-[3/4] bg-gradient-to-br ${gradient} flex flex-col items-center justify-center p-4 overflow-hidden`}>
+            {!imgError ? (
+              <Image
+                src={imagePath}
+                alt={card.name}
+                fill
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
+                onError={() => setImgError(true)}
+              />
+            ) : (
+              <>
+                <div className="absolute inset-0 bg-gradient-to-t from-card-bg/80 via-transparent to-transparent" />
+                <span className="relative text-4xl sm:text-5xl font-serif text-accent-gold/60 mb-2">{numeral}</span>
+                <div className="relative w-8 h-px bg-accent-gold/30 mb-3" />
+                <span className="relative text-xs text-text-muted tracking-widest uppercase">{card.nameEn}</span>
+              </>
+            )}
           </div>
 
           {/* Card Info */}

@@ -4,6 +4,7 @@ import { useState, useMemo, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { spreads } from '@/data/spreads';
 import { allCards, getCardById } from '@/data';
 import { TarotCard } from '@/data/types';
@@ -61,8 +62,8 @@ function CardSelector({
 
       {selectedCard ? (
         <div className="flex items-center gap-3">
-          <div className={`w-12 h-16 rounded-lg bg-gradient-to-br from-accent-gold/20 to-accent-lavender/10 border border-border flex items-center justify-center text-xs font-serif text-accent-gold/60 ${value?.reversed ? 'rotate-180' : ''}`}>
-            {selectedCard.number}
+          <div className={`w-12 h-16 rounded-lg border border-border relative overflow-hidden ${value?.reversed ? 'rotate-180' : ''}`}>
+            <Image src={`/cards/${selectedCard.id}.jpg`} alt={selectedCard.name} fill className="object-cover" sizes="48px" />
           </div>
           <div className="flex-1">
             <p className="text-sm font-semibold text-text-primary">{selectedCard.name}</p>
@@ -317,9 +318,8 @@ function ReadingContent() {
 
                     <div className="flex flex-col sm:flex-row gap-4">
                       <Link href={`/cards/${card.id}`} className="shrink-0">
-                        <div className={`w-16 h-22 rounded-xl bg-gradient-to-br from-accent-gold/20 to-accent-lavender/10 border border-border flex flex-col items-center justify-center ${input.reversed ? 'rotate-180' : ''}`}>
-                          <span className="text-lg font-serif text-accent-gold/60">{card.number}</span>
-                          <span className="text-[7px] text-text-muted">{card.nameEn}</span>
+                        <div className={`w-16 h-22 rounded-xl border border-border relative overflow-hidden ${input.reversed ? 'rotate-180' : ''}`}>
+                          <Image src={`/cards/${card.id}.jpg`} alt={card.name} fill className="object-cover" sizes="64px" />
                         </div>
                       </Link>
                       <div className="flex-1">

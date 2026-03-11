@@ -1,6 +1,7 @@
 'use client';
 
 import { use, useEffect, useState } from 'react';
+import Image from 'next/image';
 import { getCardById, allCards, spreads } from '@/data';
 import { CATEGORY_LABELS, CATEGORY_ICONS, SUIT_LABELS } from '@/data/types';
 import { SectionHeading, Badge } from '@/components/ui';
@@ -50,6 +51,39 @@ function CardSymbol({ card }: { card: { arcana: string; suit?: string; number: n
 
 const romanNumerals = ['0','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX','XXI'];
 
+/* ─── 카드 이미지 (폴백 포함) ─── */
+function CardImage({ card, numeral }: { card: { id: string; arcana: string; suit?: string; number: number; name: string; nameEn: string }; numeral: string }) {
+  const [imgError, setImgError] = useState(false);
+  const imagePath = `/cards/${card.id}.jpg`;
+
+  if (imgError) {
+    return (
+      <div className="aspect-[3/4] rounded-[16px] bg-gradient-to-br from-accent-gold/15 via-accent-lavender/8 to-card-bg border border-border flex flex-col items-center justify-center relative overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <CardSymbol card={card} />
+        </div>
+        <span className="relative text-5xl font-serif text-accent-gold/70 mb-2">{numeral}</span>
+        <div className="relative w-10 h-px bg-accent-gold/30 mb-3" />
+        <span className="relative text-xs text-text-muted tracking-widest">{card.nameEn}</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="aspect-[3/4] rounded-[16px] border border-border relative overflow-hidden">
+      <Image
+        src={imagePath}
+        alt={card.name}
+        fill
+        sizes="(max-width: 640px) 160px, 192px"
+        className="object-cover"
+        priority
+        onError={() => setImgError(true)}
+      />
+    </div>
+  );
+}
+
 export default function CardDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const card = getCardById(id);
@@ -97,16 +131,9 @@ export default function CardDetailPage({ params }: { params: Promise<{ id: strin
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         {/* 헤더 */}
         <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 mb-10">
-          {/* 카드 비주얼 (SVG + 그라디언트) */}
+          {/* 카드 비주얼 (실제 이미지 or SVG 폴백) */}
           <div className="w-40 sm:w-48 shrink-0 mx-auto sm:mx-0">
-            <div className="aspect-[3/4] rounded-[16px] bg-gradient-to-br from-accent-gold/15 via-accent-lavender/8 to-card-bg border border-border flex flex-col items-center justify-center relative overflow-hidden">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <CardSymbol card={card} />
-              </div>
-              <span className="relative text-5xl font-serif text-accent-gold/70 mb-2">{numeral}</span>
-              <div className="relative w-10 h-px bg-accent-gold/30 mb-3" />
-              <span className="relative text-xs text-text-muted tracking-widest">{card.nameEn}</span>
-            </div>
+            <CardImage card={card} numeral={numeral} />
           </div>
 
           {/* 카드 정보 */}
