@@ -1,0 +1,150 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: #0F0D1A;
+  --color-foreground: #E8E4F0;
+  --color-card-bg: #1A1726;
+  --color-card-bg-hover: #211D30;
+  --color-accent-gold: #C9A84C;
+  --color-accent-gold-dim: rgba(201, 168, 76, 0.15);
+  --color-accent-lavender: #8B7EC8;
+  --color-accent-lavender-dim: rgba(139, 126, 200, 0.15);
+  --color-text-primary: #E8E4F0;
+  --color-text-secondary: #B8B2C8;
+  --color-text-muted: #9B95A8;
+  --color-border: rgba(139, 126, 200, 0.15);
+  --color-border-hover: rgba(201, 168, 76, 0.3);
+  --color-surface: #13111E;
+  --color-surface-hover: rgba(201, 168, 76, 0.08);
+  --color-danger: #E85D75;
+
+  --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-serif: 'Noto Serif KR', Georgia, serif;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-accent-lavender-dim) transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--color-accent-gold-dim);
+  color: var(--color-accent-gold);
+}
+
+/* Subtle starfield background */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(1px 1px at 20% 30%, rgba(201, 168, 76, 0.3), transparent),
+    radial-gradient(1px 1px at 40% 70%, rgba(139, 126, 200, 0.2), transparent),
+    radial-gradient(1px 1px at 60% 20%, rgba(201, 168, 76, 0.15), transparent),
+    radial-gradient(1px 1px at 80% 50%, rgba(139, 126, 200, 0.25), transparent),
+    radial-gradient(1px 1px at 10% 80%, rgba(201, 168, 76, 0.2), transparent),
+    radial-gradient(1px 1px at 90% 10%, rgba(139, 126, 200, 0.15), transparent),
+    radial-gradient(1px 1px at 50% 50%, rgba(201, 168, 76, 0.1), transparent),
+    radial-gradient(1px 1px at 30% 90%, rgba(139, 126, 200, 0.2), transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+
+#__next, main {
+  position: relative;
+  z-index: 1;
+}
+
+/* Pretendard font */
+@font-face {
+  font-family: 'Pretendard';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Pretendard';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Pretendard';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-SemiBold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Pretendard';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* Utility classes */
+.glass {
+  background: rgba(26, 23, 38, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--color-border);
+}
+
+.gold-glow {
+  box-shadow: 0 0 20px rgba(201, 168, 76, 0.15), 0 0 40px rgba(201, 168, 76, 0.05);
+}
+
+.lavender-glow {
+  box-shadow: 0 0 20px rgba(139, 126, 200, 0.15), 0 0 40px rgba(139, 126, 200, 0.05);
+}
+
+.card-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-shimmer::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 40%,
+    rgba(201, 168, 76, 0.03) 45%,
+    rgba(201, 168, 76, 0.05) 50%,
+    rgba(201, 168, 76, 0.03) 55%,
+    transparent 60%
+  );
+  transform: rotate(0deg);
+  transition: transform 0.6s ease;
+}
+
+.card-shimmer:hover::after {
+  transform: rotate(180deg);
+}
