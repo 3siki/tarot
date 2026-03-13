@@ -213,7 +213,7 @@ function ReadingContent() {
         {step === 'topic' && (
           <motion.div key="topic" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
             <h3 className="text-lg font-semibold text-text-primary mb-4">어떤 주제로 리딩하고 싶으신가요?</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
               {TOPICS.map((topic) => (
                 <button
                   key={topic.id}
@@ -224,6 +224,34 @@ function ReadingContent() {
                   <span className="text-sm font-semibold text-text-primary group-hover:text-accent-gold transition-colors">{topic.label}</span>
                 </button>
               ))}
+            </div>
+
+            {/* 타로 질문 가이드 */}
+            <div className="rounded-[16px] bg-gradient-to-br from-accent-gold/5 to-accent-lavender/5 border border-border p-5 sm:p-6 shadow-sm">
+              <h3 className="text-sm font-semibold text-accent-gold mb-4">💡 타로에게 좋은 질문을 던지는 방법</h3>
+              <ul className="space-y-4 text-xs sm:text-sm text-text-secondary leading-relaxed">
+                <li className="flex items-start gap-2">
+                  <span className="text-accent-lavender mt-0.5">•</span>
+                  <div>
+                    <strong className="text-text-primary block mb-1">구체적으로 물어보세요.</strong>
+                    "내 연애운은 어때?" 보다는 <span className="text-text-primary bg-accent-gold/10 px-1 rounded">"지금 만나는 사람과 관계를 발전시키려면 어떻게 해야 할까?"</span>가 더 명확한 조언을 줍니다.
+                  </div>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-accent-lavender mt-0.5">•</span>
+                  <div>
+                    <strong className="text-text-primary block mb-1">'예/아니오' 질문은 피하세요.</strong>
+                    "이직에 성공할까?" 보다는 <span className="text-text-primary bg-accent-gold/10 px-1 rounded">"이직을 성공하기 위해 내가 지금 집중해야 할 부분은?"</span>이 타로의 방향성 제시에 적합합니다.
+                  </div>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-accent-lavender mt-0.5">•</span>
+                  <div>
+                    <strong className="text-text-primary block mb-1">주체를 '나'로 설정하세요.</strong>
+                    "그 사람은 무슨 생각일까?" 보다는 <span className="text-text-primary bg-accent-gold/10 px-1 rounded">"그 사람과의 관계에서 내가 어떤 태도를 취하면 좋을까?"</span>에 초점을 맞추세요.
+                  </div>
+                </li>
+              </ul>
             </div>
           </motion.div>
         )}
