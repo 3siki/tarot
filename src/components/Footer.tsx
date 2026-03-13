@@ -51,7 +51,7 @@ export default function Footer() {
 
         <div className="border-t border-border mt-8 pt-6 text-center">
           <p className="text-xs text-text-muted">
-            © 2025 타로 길잡이. 교육 목적으로 제작되었습니다.
+            © 타로 길잡이. 교육 목적으로 제작되었습니다.
           </p>
         </div>
       </div>
