@@ -132,6 +132,8 @@ function ReadingContent() {
   const [selectedTopic, setSelectedTopic] = useState(preselectedTopic || '');
   const [selectedSpreadId, setSelectedSpreadId] = useState(preselectedSpread || '');
   const [cardInputs, setCardInputs] = useState<(CardInput | null)[]>([]);
+  const [readingMode, setReadingMode] = useState<'manual' | 'auto'>('manual');
+  const [isDrawing, setIsDrawing] = useState(false);
 
   const selectedSpread = useMemo(() => spreads.find((s) => s.id === selectedSpreadId), [selectedSpreadId]);
 
@@ -164,6 +166,27 @@ function ReadingContent() {
 
   const handleSubmit = () => {
     if (allCardsFilled) setStep('result');
+  };
+
+  const handleAutoDraw = () => {
+    if (!selectedSpread) return;
+    setIsDrawing(true);
+    setCardInputs(new Array(selectedSpread.cardCount).fill(null));
+
+    // Simulate drawing animation delay
+    setTimeout(() => {
+      // Pick unique random cards
+      const count = selectedSpread.cardCount;
+      const shuffled = [...allCards].sort(() => Math.random() - 0.5).slice(0, count);
+      
+      const newInputs: CardInput[] = shuffled.map((c) => ({
+        cardId: c.id,
+        reversed: Math.random() > 0.5,
+      }));
+      
+      setCardInputs(newInputs);
+      setIsDrawing(false);
+    }, 1500); // 1.5 seconds suspense
   };
 
   const handleReset = () => {
@@ -291,10 +314,45 @@ function ReadingContent() {
               <Badge variant="gold">{topicLabel}</Badge>
               <Badge variant="lavender">{selectedSpread.name}</Badge>
             </div>
-            <h3 className="text-lg font-semibold text-text-primary mb-2">뽑은 카드를 입력하세요</h3>
-            <p className="text-xs text-text-muted mb-6">각 위치에 해당하는 카드를 선택하고, 정방향/역방향을 지정하세요.</p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+              <div>
+                <h3 className="text-lg font-semibold text-text-primary mb-1">카드를 준비해주세요</h3>
+                <p className="text-xs text-text-muted">직접 카드를 뽑아 입력하거나, 서비스가 대신 뽑아드립니다.</p>
+              </div>
+              <div className="flex bg-surface p-1 rounded-xl">
+                <button
+                  onClick={() => setReadingMode('manual')}
+                  className={`flex-1 sm:flex-none px-4 py-2 text-xs font-semibold rounded-lg transition-all ${
+                    readingMode === 'manual' ? 'bg-card-bg text-text-primary shadow-sm border border-border' : 'text-text-muted hover:text-text-secondary'
+                  }`}
+                >
+                  직접 입력하기 (셀프)
+                </button>
+                <button
+                  onClick={() => setReadingMode('auto')}
+                  className={`flex-1 sm:flex-none px-4 py-2 text-xs font-semibold rounded-lg transition-all ${
+                    readingMode === 'auto' ? 'bg-card-bg text-text-primary shadow-sm border border-border' : 'text-text-muted hover:text-text-secondary'
+                  }`}
+                >
+                  자동으로 뽑기 (도움받기)
+                </button>
+              </div>
+            </div>
 
-            <div className="space-y-3 mb-6">
+            {readingMode === 'auto' && !allCardsFilled && (
+              <div className="rounded-[16px] bg-card-bg border border-border p-8 text-center mb-6">
+                <p className="text-sm text-text-primary mb-6">질문을 마음에 깊이 품고 아래 버튼을 눌러주세요.</p>
+                <button
+                  onClick={handleAutoDraw}
+                  disabled={isDrawing}
+                  className="px-8 py-3 rounded-xl bg-accent-gold text-background font-semibold text-sm hover:bg-accent-gold/90 transition-all disabled:opacity-50"
+                >
+                  {isDrawing ? '🔮 카드를 섞고 배열하는 중...' : '✨ 카운슬러에게 카드 뽑기 맡기기 ✨'}
+                </button>
+              </div>
+            )}
+
+            <div className={`space-y-3 mb-6 ${readingMode === 'auto' && !allCardsFilled ? 'opacity-30 pointer-events-none' : ''}`}>
               {selectedSpread.positions.map((pos, i) => (
                 <CardSelector
                   key={i}
@@ -311,7 +369,7 @@ function ReadingContent() {
               disabled={!allCardsFilled}
               className="w-full py-3 rounded-xl bg-accent-gold text-background font-semibold text-sm hover:bg-accent-gold/90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              📖 해석 가이드 보기
+              📖 {readingMode === 'auto' ? '해석 가이드 보기 (서비스 툴)' : '해석 가이드 보기 (셀프 도움말)'}
             </button>
           </motion.div>
         )}
