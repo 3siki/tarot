@@ -18,7 +18,7 @@ function CardSymbol({ card }: { card: { arcana: string; suit?: string; number: n
   const isMajor = card.arcana === 'major';
 
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="opacity-30">
+    <svg aria-hidden="true" width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="opacity-30">
       {/* 외곽 원 */}
       <circle cx={cx} cy={cy} r={50} fill="none" stroke="currentColor" strokeWidth="0.5" className="text-accent-gold" />
       <circle cx={cx} cy={cy} r={45} fill="none" stroke="currentColor" strokeWidth="0.3" className="text-accent-lavender" strokeDasharray="4 4" />
@@ -159,7 +159,10 @@ export default function CardDetailPage({ params }: { params: Promise<{ id: strin
 
             <div className="flex flex-wrap gap-1.5 justify-center sm:justify-start">
               {card.keywords.map((kw) => (
-                <span key={kw} className="px-2.5 py-1 rounded-full text-xs bg-accent-lavender-dim text-accent-lavender">{kw}</span>
+                <span key={kw} className="px-2.5 py-1 rounded-full text-xs bg-accent-lavender-dim text-accent-lavender">
+                  {kw}
+                  <span className="sr-only">, </span>
+                </span>
               ))}
             </div>
           </div>

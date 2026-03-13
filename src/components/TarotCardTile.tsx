@@ -65,6 +65,7 @@ export default function TarotCardTile({ card, index = 0 }: { card: TarotCard; in
               {card.keywords.slice(0, 3).map((kw) => (
                 <span key={kw} className="px-2 py-0.5 rounded-full text-[10px] bg-accent-lavender-dim text-accent-lavender">
                   {kw}
+                  <span className="sr-only">, </span>
                 </span>
               ))}
             </div>

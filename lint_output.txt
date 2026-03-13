@@ -1,0 +1,81 @@
+﻿
+> tarot@0.1.0 lint
+> eslint
+
+
+C:\Users\?쒗삎\Desktop\tarot\download-cards.cjs
+    1:15  error    A `require()` style import is forbidden       @typescript-eslint/no-require-imports
+    2:14  error    A `require()` style import is forbidden       @typescript-eslint/no-require-imports
+    3:12  error    A `require()` style import is forbidden       @typescript-eslint/no-require-imports
+    4:14  error    A `require()` style import is forbidden       @typescript-eslint/no-require-imports
+  145:9   warning  'success' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\?쒗삎\Desktop\tarot\src\app\page.tsx
+   96:5   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\?쒗삎\Desktop\tarot\src\app\page.tsx:96:5
+  94 |   useEffect(() => {
+  95 |     const dayIndex = new Date().getDate() % majorArcana.length;
+> 96 |     setCard(majorArcana[dayIndex]);
+     |     ^^^^^^^ Avoid calling setState() directly within an effect
+  97 |   }, []);
+  98 |
+  99 |   return (  react-hooks/set-state-in-effect
+  136:50  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+C:\Users\?쒗삎\Desktop\tarot\src\app\page.tsx:136:50
+  134 | export default function HomePage() {
+  135 |   const featuredCards = useMemo(() => {
+> 136 |     const shuffled = [...majorArcana].sort(() => Math.random() - 0.5);
+      |                                                  ^^^^^^^^^^^^^ Cannot call impure function
+  137 |     return shuffled.slice(0, 6);
+  138 |   }, []);
+  139 |                                                                                                                                                                                                                                                                                            react-hooks/purity
+
+C:\Users\?쒗삎\Desktop\tarot\src\app\reading\page.tsx
+  10:10  warning  'TarotCard' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\?쒗삎\Desktop\tarot\src\hooks\useStorage.ts
+  13:17  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\?쒗삎\Desktop\tarot\src\hooks\useStorage.ts:13:17
+  11 |   useEffect(() => {
+  12 |     const stored = localStorage.getItem(STORAGE_KEY);
+> 13 |     if (stored) setBookmarks(JSON.parse(stored));
+     |                 ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  14 |   }, []);
+  15 |
+  16 |   const toggleBookmark = useCallback((cardId: string) => {  react-hooks/set-state-in-effect
+  34:17  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\?쒗삎\Desktop\tarot\src\hooks\useStorage.ts:34:17
+  32 |   useEffect(() => {
+  33 |     const stored = localStorage.getItem(RECENT_KEY);
+> 34 |     if (stored) setRecent(JSON.parse(stored));
+     |                 ^^^^^^^^^ Avoid calling setState() directly within an effect
+  35 |   }, []);
+  36 |
+  37 |   const addRecentView = useCallback((cardId: string) => {          react-hooks/set-state-in-effect
+
+??10 problems (8 errors, 2 warnings)
+

@@ -123,6 +123,94 @@ function CardSelector({
   );
 }
 
+function FlippableResultCard({ pos, input, card, topicMeaning, topicLabel, selectedTopic, delay }: any) {
+  const [flipped, setFlipped] = useState(false);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay }}
+      className={`rounded-[16px] border transition-all duration-500 ${flipped ? 'bg-card-bg border-border p-5 sm:p-6 cursor-default' : 'bg-surface border-accent-gold/30 p-8 sm:p-10 cursor-pointer hover:border-accent-gold hover:shadow-lg flex flex-col items-center justify-center'}`}
+      onClick={() => !flipped && setFlipped(true)}
+    >
+      {!flipped ? (
+        <motion.div 
+          initial={{ rotateY: 180 }}
+          animate={{ rotateY: 0 }}
+          className="flex flex-col items-center"
+        >
+          <div className="w-20 h-32 sm:w-24 sm:h-36 rounded-xl border-2 border-accent-gold/50 bg-gradient-to-br from-accent-gold to-accent-lavender shadow-xl flex items-center justify-center">
+             <span className="text-4xl">🌌</span>
+          </div>
+          <p className="mt-6 text-sm font-bold text-accent-gold animate-pulse">카드를 클릭하여 해석 확인하기</p>
+          <p className="mt-2 text-xs text-text-muted">{pos.name} : {pos.description}</p>
+        </motion.div>
+      ) : (
+        <motion.div
+          initial={{ rotateY: -90, opacity: 0 }}
+          animate={{ rotateY: 0, opacity: 1 }}
+          transition={{ duration: 0.4 }}
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <span className="w-7 h-7 rounded-lg bg-accent-gold-dim flex items-center justify-center text-xs font-bold text-accent-gold">
+              {pos.index + 1}
+            </span>
+            <span className="font-semibold text-sm text-text-primary">{pos.name}</span>
+            <span className="text-xs text-text-muted">— {pos.description}</span>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Link href={`/cards/${card.id}`} className="shrink-0 flex items-start justify-center">
+              <div className={`w-20 h-32 sm:w-24 sm:h-36 rounded-xl border border-border relative overflow-hidden shadow-md transition-transform hover:scale-105 ${input.reversed ? 'rotate-180' : ''}`}>
+                <Image src={`/cards/${card.id}.jpg`} alt={card.name} fill className="object-cover" sizes="96px" />
+              </div>
+            </Link>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <Link href={`/cards/${card.id}`} className="font-serif text-lg font-semibold text-text-primary hover:text-accent-gold transition-colors">
+                  {card.name}
+                </Link>
+                {input.reversed && <Badge variant="lavender">역방향</Badge>}
+              </div>
+
+              {/* 핵심 키워드 */}
+              <div className="flex flex-wrap gap-1 mb-3">
+                {card.keywords.map((kw: string) => (
+                  <span key={kw} className="px-2 py-0.5 rounded-full text-[10px] bg-accent-lavender-dim text-accent-lavender">
+                    {kw}
+                    <span className="sr-only">, </span>
+                  </span>
+                ))}
+              </div>
+
+              {/* 의미 해석 */}
+              <div className="mb-3">
+                <h4 className="text-xs font-semibold text-text-secondary mb-1">
+                  {input.reversed ? '🌙 역방향 의미' : '☀️ 정방향 의미'}
+                </h4>
+                <p className="text-sm text-text-secondary leading-relaxed">
+                  {input.reversed ? card.reversedMeaning : card.uprightMeaning}
+                </p>
+              </div>
+
+              {/* 주제별 해석 */}
+              {topicMeaning && (
+                <div className="rounded-xl bg-surface p-3 mt-4">
+                  <h4 className="text-xs font-semibold text-accent-gold mb-1 flex items-center gap-1.5">
+                    {TOPICS.find((t) => t.id === selectedTopic)?.icon} {topicLabel} 관점
+                  </h4>
+                  <p className="text-xs text-text-muted leading-relaxed">{topicMeaning}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </motion.div>
+      )}
+    </motion.div>
+  );
+}
+
 function ReadingContent() {
   const searchParams = useSearchParams();
   const preselectedSpread = searchParams.get('spread');
@@ -308,7 +396,28 @@ function ReadingContent() {
 
         {/* Step 3: 카드 입력 */}
         {step === 'cards' && selectedSpread && (
-          <motion.div key="cards" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+          <motion.div key="cards" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="relative">
+            
+            {/* 시각적 로딩/셔플 오버레이 */}
+            <AnimatePresence>
+              {isDrawing && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-x-0 top-32 bottom-20 z-10 flex flex-col items-center justify-center bg-card-bg/80 backdrop-blur-sm rounded-[16px] border border-accent-gold/50 shadow-2xl"
+                >
+                  <div className="w-16 h-24 mb-6 relative">
+                    {/* 카드 셔플 애니메이션 느낌 */}
+                    <motion.div animate={{ rotateY: 180 }} transition={{ repeat: Infinity, duration: 1, ease: 'linear' }} className="absolute inset-0 rounded-xl bg-gradient-to-br from-accent-gold to-accent-lavender shadow-lg" />
+                    <motion.div animate={{ rotateY: -180 }} transition={{ repeat: Infinity, duration: 1, ease: 'linear' }} className="absolute inset-0 rounded-xl border-2 border-background" />
+                  </div>
+                  <p className="text-sm font-bold text-accent-gold">우주의 기운을 모아 카드를 뽑는 중...</p>
+                  <p className="text-xs text-text-muted mt-2">잠시만 기다려주세요</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             <div className="flex items-center gap-2 mb-4">
               <button onClick={() => setStep('spread')} className="text-xs text-text-muted hover:text-accent-gold transition-colors">← 스프레드 변경</button>
               <Badge variant="gold">{topicLabel}</Badge>
@@ -401,64 +510,16 @@ function ReadingContent() {
                 const topicMeaning = card.categories[catKey];
 
                 return (
-                  <motion.div
+                  <FlippableResultCard 
                     key={i}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.1 }}
-                    className="rounded-[16px] bg-card-bg border border-border p-5 sm:p-6"
-                  >
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className="w-7 h-7 rounded-lg bg-accent-gold-dim flex items-center justify-center text-xs font-bold text-accent-gold">
-                        {pos.index + 1}
-                      </span>
-                      <span className="font-semibold text-sm text-text-primary">{pos.name}</span>
-                      <span className="text-xs text-text-muted">— {pos.description}</span>
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row gap-4">
-                      <Link href={`/cards/${card.id}`} className="shrink-0">
-                        <div className={`w-16 h-22 rounded-xl border border-border relative overflow-hidden ${input.reversed ? 'rotate-180' : ''}`}>
-                          <Image src={`/cards/${card.id}.jpg`} alt={card.name} fill className="object-cover" sizes="64px" />
-                        </div>
-                      </Link>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Link href={`/cards/${card.id}`} className="font-serif text-lg font-semibold text-text-primary hover:text-accent-gold transition-colors">
-                            {card.name}
-                          </Link>
-                          {input.reversed && <Badge variant="lavender">역방향</Badge>}
-                        </div>
-
-                        {/* 핵심 키워드 */}
-                        <div className="flex flex-wrap gap-1 mb-3">
-                          {card.keywords.map((kw) => (
-                            <span key={kw} className="px-2 py-0.5 rounded-full text-[10px] bg-accent-lavender-dim text-accent-lavender">{kw}</span>
-                          ))}
-                        </div>
-
-                        {/* 의미 해석 */}
-                        <div className="mb-3">
-                          <h4 className="text-xs font-semibold text-text-secondary mb-1">
-                            {input.reversed ? '🌙 역방향 의미' : '☀️ 정방향 의미'}
-                          </h4>
-                          <p className="text-sm text-text-secondary leading-relaxed">
-                            {input.reversed ? card.reversedMeaning : card.uprightMeaning}
-                          </p>
-                        </div>
-
-                        {/* 주제별 해석 */}
-                        {topicMeaning && (
-                          <div className="rounded-xl bg-surface p-3">
-                            <h4 className="text-xs font-semibold text-accent-gold mb-1">
-                              {TOPICS.find((t) => t.id === selectedTopic)?.icon} {topicLabel} 관점
-                            </h4>
-                            <p className="text-xs text-text-muted leading-relaxed">{topicMeaning}</p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </motion.div>
+                    pos={pos}
+                    input={input}
+                    card={card}
+                    topicMeaning={topicMeaning}
+                    topicLabel={topicLabel}
+                    selectedTopic={selectedTopic}
+                    delay={i * 0.15}
+                  />
                 );
               })}
             </div>
