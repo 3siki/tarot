@@ -18,6 +18,9 @@ const TOPICS = [
   { id: 'growth', label: '성장·자기계발', icon: '🌱' },
   { id: 'life', label: '인생 전반', icon: '🌏' },
   { id: 'health', label: '건강·웰빙', icon: '🌿' },
+  { id: 'today', label: '오늘의 운세', icon: '☀️' },
+  { id: 'tomorrow', label: '내일의 운세', icon: '🌤️' },
+  { id: 'year', label: '올해 운세', icon: '🎯' },
 ];
 
 type Step = 'topic' | 'spread' | 'cards' | 'result';
@@ -134,7 +137,12 @@ function ReadingContent() {
 
   const handleTopicSelect = (topicId: string) => {
     setSelectedTopic(topicId);
-    setStep('spread');
+    if (selectedSpreadId) {
+      setCardInputs(new Array(selectedSpread?.cardCount || 1).fill(null));
+      setStep('cards');
+    } else {
+      setStep('spread');
+    }
   };
 
   const handleSpreadSelect = (spreadId: string) => {
@@ -166,7 +174,13 @@ function ReadingContent() {
   };
 
   const topicLabel = TOPICS.find((t) => t.id === selectedTopic)?.label || selectedTopic;
-  const topicCategory = selectedTopic as string;
+  
+  const getMappedCategory = (topic: string) => {
+    if (topic === 'today' || topic === 'tomorrow') return 'luck';
+    if (topic === 'year') return 'life';
+    return topic;
+  };
+  const topicCategory = getMappedCategory(selectedTopic);
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
